@@ -5,15 +5,18 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    private List<Tube> tubes = new List<Tube>();
+    public List<Tube> tubes = new List<Tube>();
     public static GameManager instance;
     public GameObject prefabTube;
     public GameObject prefabBall;
-    public GameObject listTubeGO;
+    public GameObject listRowGO;
+    public GameObject prefabListTube;
     public Sprite[] spriteBalls;
     public LevelData[] level;
     public GameObject panelWin;
+    public Button btnContinue;
 
+    public int lvGame = 0;
 
     public Tube currentTube;
     private void Awake()
@@ -26,13 +29,13 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }    
-        listTubeGO = GameObject.Find("ListTube");
-        panelWin = GameObject.Find("PanelWin");
-        panelWin.gameObject.SetActive(false);
+       // listRowGO = GameObject.Find("ListTube");
+       
     }
     void Start()
     {
-        level[0].CreateLevel(ref tubes);
+        level[lvGame].CreateLevel();
+        btnContinue.onClick.AddListener(EventButtonContinue);
     }
 
     // Update is called once per frame
@@ -40,6 +43,19 @@ public class GameManager : MonoBehaviour
     {
         
     }
+    public void EventButtonContinue()
+    {
+        Debug.Log("NextLv");
+        panelWin.SetActive(false);
+        for (int i = 0; i < listRowGO.transform.childCount; i++)
+        {
+            Destroy(listRowGO.transform.GetChild(i).gameObject);
+
+        }
+        tubes.Clear();
+        level[lvGame].CreateLevel();
+        
+    }    
     public void CheckWin()
     {
         if(IsWin())
@@ -52,6 +68,7 @@ public class GameManager : MonoBehaviour
         yield return new WaitForSeconds(0.5f);
         // Win
         panelWin.SetActive(true);
+        lvGame++;
 
     }    
     bool IsWin()
